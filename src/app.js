@@ -14,10 +14,6 @@ function App() {
   const [isSizeVisible, setIsSizeVisible] = useState(false);
   const barsCount = data.length;
 
-  // generate new array everytime dataSize is changed
-  useEffect(() => {
-    setData([...Array(dataSize)].map(() => randomize(10, 400)));
-  }, [dataSize]);
 
   // calculate gap, width and margin for even spacing of the array bars'
   const gap = 2;                          // the gap between bars in pixels
@@ -74,8 +70,17 @@ function App() {
   }
 
   function handleDataSizeChange(event) {
-    const value = parseFloat(event.target.value);
-    setDataSize(value);
+    const nextSize = parseFloat(event.target.value);
+    setDataSize(nextSize);
+
+    // generate new array everytime dataSize is changed
+    setData([...Array(nextSize)].map(() => randomize(10, 400)));
+
+    // recolor the bars as array is being resized
+    const arrayBars = document.getElementsByClassName('bar');
+    Array.from(arrayBars).forEach(element => {
+      element.style.backgroundColor = COLOUR_DEFAULT
+    });
   }
 
   const dataComponent = data.map((value, id) => {
