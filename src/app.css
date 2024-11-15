@@ -1,5 +1,5 @@
 .app {
-  /* text-align: center; */
+  position: relative;
   width: auto;
   margin: 0 5vw;
   height: 70vh;
@@ -7,8 +7,31 @@
   flex-direction: row;
   justify-content: center;
   align-items: end;
-}
+} 
 
 .bar {
   background: gold;
+}
+
+.info {
+  position: fixed;
+  top: 10%;
+  height: 7rem;
+  width: 20rem;
+  background-color: azure;
+  font-size: 5rem;
+  z-index: 999;
+  background: linear-gradient(
+    to right, 
+    rgba(255, 255, 255, 0) 0%,  /* fully transparent */
+    rgba(255, 255, 255, 0.5) 25%, /* semi-transparent */
+    rgba(255, 255, 255, 1) 50%,  /* fully opaque */
+    rgba(255, 255, 255, 0.5) 75%, /* semi-transparent */
+    rgba(255, 255, 255, 0) 100%  /* fully transparent */
+  );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #000c23; 
 }

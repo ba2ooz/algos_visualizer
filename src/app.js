@@ -1,17 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './app.css';
 
 const COLOUR_COMPARISON = 'purple';
 const COLOUR_SORTED = 'green';
 const COLOUR_DEFAULT = 'gold';
 
-function App() {
-  const dataSize = 20;
-  const [data, setData] = useState([...Array(dataSize)].map(() => randomize(10, 400)));
-  const dynamicWidth = Math.round(1000 / data.length);
-  const dynamicMargin = (dataSize > 200) ? (dynamicWidth / 10) : 0.5;
+const DATASIZE_MIN = 10;
+const DATASIZE_MAX = 250;
 
-  function swap(arr, i, j){
+function App() {
+  const [dataSize, setDataSize] = useState(20);
+  const [data, setData] = useState([...Array(dataSize)].map(() => randomize(10, 400)));
+  const [isSizeVisible, setIsSizeVisible] = useState(false);
+  const barsCount = data.length;
+
+  // generate new array everytime dataSize is changed
+  useEffect(() => {
+    setData([...Array(dataSize)].map(() => randomize(10, 400)));
+  }, [dataSize]);
+
+  // calculate gap, width and margin for even spacing of the array bars'
+  const gap = 2;                          // the gap between bars in pixels
+  const containerWidth = 2000;            // the width of the array bars container in pixels
+  const totalGap = gap * (barsCount - 1);
+  const dynamicWidth = Math.round((containerWidth - totalGap) / barsCount);
+  const dynamicMargin = gap / 2;          // half the gap as margin on each side of the bar
+
+  function swap(arr, i, j) {
     let aux = arr[i];
     arr[i] = arr[j];
     arr[j] = aux;
@@ -19,11 +34,11 @@ function App() {
 
   function bubbleSortStep(arrayBars, arr, i, j) {
     // stop, arr is sorted
-    if (i >= arr.length - 1){
+    if (i >= arr.length - 1) {
       arrayBars[j].style.backgroundColor = COLOUR_SORTED;
-      return; 
+      return;
     }
-    
+
     // move to next iteration
     if (j >= arr.length - i - 1) {
       bubbleSortStep(arrayBars, arr, i + 1, 0);
@@ -32,10 +47,10 @@ function App() {
 
     // change the color of the currently evaluated array bars 
     arrayBars[j].style.backgroundColor = COLOUR_COMPARISON
-    arrayBars[j+1].style.backgroundColor = COLOUR_COMPARISON
-    
+    arrayBars[j + 1].style.backgroundColor = COLOUR_COMPARISON
+
     if (arr[j] > arr[j + 1]) {
-      swap(arr, j, j + 1); 
+      swap(arr, j, j + 1);
       arrayBars[j].style.backgroundColor = COLOUR_SORTED;
       arrayBars[j + 1].style.backgroundColor = COLOUR_SORTED;
 
@@ -57,7 +72,12 @@ function App() {
     const arrayBars = document.getElementsByClassName('bar');
     bubbleSortStep(arrayBars, sortedData, 0, 0);
   }
-  
+
+  function handleDataSizeChange(event) {
+    const value = parseFloat(event.target.value);
+    setDataSize(value);
+  }
+
   const dataComponent = data.map((value, id) => {
     return (
       <div key={id}
@@ -65,7 +85,8 @@ function App() {
         style={{
           height: value,
           width: dynamicWidth,
-          margin: dynamicMargin
+          marginLeft: (id === 0) ? 0 : dynamicMargin,
+          marginRight: (id === barsCount - 1) ? 0 : dynamicMargin
         }}>
       </div>
     )
@@ -73,10 +94,23 @@ function App() {
 
   return (
     <>
-    <div className="app">
-      {dataComponent}
-    </div>
-    <button onClick={doSomeMagic}>sort</button>
+      <div className="app">
+        {dataComponent}
+        {isSizeVisible && <div className="info visible">{dataSize}</div>}
+      </div>
+      <div>
+        <input
+          type="range"
+          id="datasize"
+          min={DATASIZE_MIN}
+          max={DATASIZE_MAX}
+          onMouseDown={() => setIsSizeVisible(true)}
+          onMouseUp={() => setIsSizeVisible(false)}
+          onChange={handleDataSizeChange}
+        />
+        <label htmlFor="datasize">Bar number</label>
+      </div>
+      <button onClick={doSomeMagic}>sort</button>
     </>
   );
 }
