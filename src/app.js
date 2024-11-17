@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import './app.css';
 
 const COLOUR_COMPARISON = 'purple';
@@ -9,8 +9,7 @@ const DATASIZE_MIN = 10;
 const DATASIZE_MAX = 250;
 
 function App() {
-  const [dataSize, setDataSize] = useState(20);
-  const [data, setData] = useState([...Array(dataSize)].map(() => randomize(10, 400)));
+  const [data, setData] = useState([...Array(DATASIZE_MIN*DATASIZE_MIN)].map(() => randomize(10, 400)));
   const [isSizeVisible, setIsSizeVisible] = useState(false);
   const barsCount = data.length;
 
@@ -71,7 +70,6 @@ function App() {
 
   function handleDataSizeChange(event) {
     const nextSize = parseFloat(event.target.value);
-    setDataSize(nextSize);
 
     // generate new array everytime dataSize is changed
     setData([...Array(nextSize)].map(() => randomize(10, 400)));
@@ -101,12 +99,13 @@ function App() {
     <>
       <div className="app">
         {dataComponent}
-        {isSizeVisible && <div className="info visible">{dataSize}</div>}
+        {isSizeVisible && <div className="info visible">{barsCount}</div>}
       </div>
       <div>
         <input
           type="range"
           id="datasize"
+          value={barsCount}
           min={DATASIZE_MIN}
           max={DATASIZE_MAX}
           onMouseDown={() => setIsSizeVisible(true)}
