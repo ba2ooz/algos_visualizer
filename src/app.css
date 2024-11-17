@@ -1,5 +1,4 @@
-.app {
-  position: relative;
+.array {
   width: auto;
   margin: 0 5vw;
   height: 70vh;
@@ -17,7 +16,9 @@
   position: fixed;
   top: 10%;
   height: 7rem;
-  width: 20rem;
+  width: auto;
+  left: 37%;
+  right: 37%;
   background-color: azure;
   font-size: 5rem;
   z-index: 999;

@@ -3,13 +3,13 @@ import { animations, bubbleSort } from './algorithms/bubbleSort';
 import { COLORS } from './utils/colors';
 import { delay } from './utils/delay';
 import './app.css';
+import { Slider } from './components/Slider';
 
 const DATASIZE_MIN = 10;
 const DATASIZE_MAX = 250;
 
 function App() {
   const [data, setData] = useState([...Array(DATASIZE_MIN * DATASIZE_MIN)].map(() => randomize(10, 400)));
-  const [isSizeVisible, setIsSizeVisible] = useState(false);
   const barsCount = data.length;
 
   // calculate gap, width and margin for even spacing of the array bars'
@@ -68,21 +68,14 @@ function App() {
   return (
     <>
       <div className="app">
-        {dataComponent}
-        {isSizeVisible && <div className="info visible">{barsCount}</div>}
-      </div>
-      <div>
-        <input
-          type="range"
-          id="datasize"
+        <div className='array'>
+          {dataComponent}
+        </div>
+        <Slider 
           value={barsCount}
           min={DATASIZE_MIN}
           max={DATASIZE_MAX}
-          onMouseDown={() => setIsSizeVisible(true)}
-          onMouseUp={() => setIsSizeVisible(false)}
-          onChange={handleDataSizeChange}
-        />
-        <label htmlFor="datasize">Bar number</label>
+          handleChange={handleDataSizeChange} />
       </div>
       <button onClick={animateSort}>sort</button>
     </>
