@@ -1,84 +1,54 @@
 import { useState } from 'react';
+import { animations, bubbleSort } from './algorithms/bubbleSort';
+import { COLORS } from './utils/colors';
+import { delay } from './utils/delay';
 import './app.css';
-
-const COLOUR_COMPARISON = 'purple';
-const COLOUR_SORTED = 'green';
-const COLOUR_DEFAULT = 'gold';
 
 const DATASIZE_MIN = 10;
 const DATASIZE_MAX = 250;
 
 function App() {
-  const [data, setData] = useState([...Array(DATASIZE_MIN*DATASIZE_MIN)].map(() => randomize(10, 400)));
+  const [data, setData] = useState([...Array(DATASIZE_MIN * DATASIZE_MIN)].map(() => randomize(10, 400)));
   const [isSizeVisible, setIsSizeVisible] = useState(false);
   const barsCount = data.length;
 
-
   // calculate gap, width and margin for even spacing of the array bars'
-  const gap = 2;                          // the gap between bars in pixels
-  const containerWidth = 2000;            // the width of the array bars container in pixels
+  const gap = 2;                                                            // the gap between bars in pixels
+  const containerWidth = 2000;                                              // the width of the array bars container in pixels
   const totalGap = gap * (barsCount - 1);
   const dynamicWidth = Math.round((containerWidth - totalGap) / barsCount);
-  const dynamicMargin = gap / 2;          // half the gap as margin on each side of the bar
+  const dynamicMargin = gap / 2;                                            // half the gap as margin on each side of the bar
 
-  function swap(arr, i, j) {
-    let aux = arr[i];
-    arr[i] = arr[j];
-    arr[j] = aux;
-  };
-
-  function bubbleSortStep(arrayBars, arr, i, j) {
-    // stop, arr is sorted
-    if (i >= arr.length - 1) {
-      arrayBars[j].style.backgroundColor = COLOUR_SORTED;
-      return;
-    }
-
-    // move to next iteration
-    if (j >= arr.length - i - 1) {
-      bubbleSortStep(arrayBars, arr, i + 1, 0);
-      return;
-    }
-
-    // change the color of the currently evaluated array bars 
-    arrayBars[j].style.backgroundColor = COLOUR_COMPARISON
-    arrayBars[j + 1].style.backgroundColor = COLOUR_COMPARISON
-
-    if (arr[j] > arr[j + 1]) {
-      swap(arr, j, j + 1);
-      arrayBars[j].style.backgroundColor = COLOUR_SORTED;
-      arrayBars[j + 1].style.backgroundColor = COLOUR_SORTED;
-
-      setData([...arr]);
-    }
-
-    // set timeout to slow down the sort animation
-    setTimeout(() => {
-      // one bubble arrived at the top so color it accordingly
-      arrayBars[j].style.backgroundColor = COLOUR_DEFAULT;
-      arrayBars[j + 1].style.backgroundColor = COLOUR_SORTED;
-      // move to the next iteration
-      bubbleSortStep(arrayBars, arr, i, j + 1);
-    }, 100);
-  }
-
-  function doSomeMagic() {
-    const sortedData = [...data];
+  async function animateSort() {
+    bubbleSort(data.slice());
     const arrayBars = document.getElementsByClassName('bar');
-    bubbleSortStep(arrayBars, sortedData, 0, 0);
+
+    for (const [_, animation] of Object.entries(animations)) {
+      for (const [animationId, animationValue] of Object.entries(animation)) {
+        if (animationId === 'data_change'){
+          setData(animationValue);
+          continue;
+        }
+
+        arrayBars[animationId].style.backgroundColor = animationValue;
+      }
+
+      await delay(500); // ms
+    }
   }
 
   function handleDataSizeChange(event) {
-    const nextSize = parseFloat(event.target.value);
+    const dataSize = parseFloat(event.target.value);
 
     // generate new array everytime dataSize is changed
-    setData([...Array(nextSize)].map(() => randomize(10, 400)));
+    setData([...Array(dataSize)].map(() => randomize(10, 400)));
 
     // recolor the bars as array is being resized
     const arrayBars = document.getElementsByClassName('bar');
-    Array.from(arrayBars).forEach(element => {
-      element.style.backgroundColor = COLOUR_DEFAULT
-    });
+    Array.from(arrayBars)
+         .forEach(bar => {
+            bar.style.backgroundColor = COLORS.DEFAULT
+         });
   }
 
   const dataComponent = data.map((value, id) => {
@@ -114,7 +84,7 @@ function App() {
         />
         <label htmlFor="datasize">Bar number</label>
       </div>
-      <button onClick={doSomeMagic}>sort</button>
+      <button onClick={animateSort}>sort</button>
     </>
   );
 }
