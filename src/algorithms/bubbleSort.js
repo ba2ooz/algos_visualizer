@@ -1,12 +1,12 @@
 import { COLORS } from "../utils/colors";
 
-export const animations = [];
-
 export function bubbleSort(arr) {
-    bubbleSortStep(arr, 0, 0);
+    let animations = [];
+    bubbleSortStep(animations, arr, 0, 0);
+    return animations;
 }
 
-function bubbleSortStep(arr, i, j) {
+function bubbleSortStep(animations, arr, i, j) {
     const pos1 = j;
     const pos2 = j + 1;
     let animation_step = {};
@@ -28,7 +28,7 @@ function bubbleSortStep(arr, i, j) {
         };
         animations.push(animation_step);
 
-        bubbleSortStep(arr, i + 1, 0);
+        bubbleSortStep(animations, arr, i + 1, 0);
 
         return;
     }
@@ -59,7 +59,7 @@ function bubbleSortStep(arr, i, j) {
     animations.push(animation_step);
 
     // move to the next iteration
-    bubbleSortStep(arr, i, pos2);
+    bubbleSortStep(animations, arr, i, pos2);
 }
 
 function swap(arr, i, j) {

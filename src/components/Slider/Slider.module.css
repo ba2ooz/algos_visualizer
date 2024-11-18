@@ -1,0 +1,11 @@
+.sliderContainer {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    margin: 0 10px;
+}
+
+label {
+    color: aliceblue;
+    margin: 0 10px;
+}
