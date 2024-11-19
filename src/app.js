@@ -1,7 +1,7 @@
 import { useRef, useReducer } from 'react';
-import { COLORS, delay } from './shared/utils';
+import { delay } from './shared/utils';
 
-import { ArrayBars, arrayBarElements } from './components/ArrayBars/ArrayBars';
+import { ArrayBars } from './components/ArrayBars/ArrayBars';
 import { Slider } from './components/Slider/Slider';
 import { initialState, sortReducer } from './reducers/sortReducer';
 import { bubbleSort } from './algorithms/bubbleSort';
@@ -34,11 +34,14 @@ function App() {
             type: 'changed_data',
             data: animationValue,
           });
-          continue;
         }
-
-        // change the color of the needed bar directly in the DOM.
-        arrayBarElements[animationId].style.backgroundColor = animationValue;
+        else {
+          dispatch({
+            type: 'changed_animation',
+            barId: animationId,
+            color: animationValue
+          })
+        }
       }
 
       await delay(sortSpeedRef.current); // ms
@@ -68,7 +71,7 @@ function App() {
       <div className={styles.appContainer}>
         <ArrayBars
           payload={sortState.data}
-          color={COLORS.DEFAULT}
+          backbgroundColors={sortState.animations}
         />
         <Slider
           slider={{
