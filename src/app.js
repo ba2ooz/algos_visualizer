@@ -1,109 +1,99 @@
-import { useState, useRef } from 'react';
-import { bubbleSort } from './algorithms/bubbleSort';
-import { COLORS } from './utils/colors';
-import { delay } from './utils/delay';
+import { useRef, useReducer } from 'react';
+import { COLORS, delay } from './shared/utils';
+
+import { ArrayBars, arrayBarElements } from './components/ArrayBars/ArrayBars';
 import { Slider } from './components/Slider/Slider';
-import './app.css';
+import { initialState, sortReducer } from './sortReducer';
+import { bubbleSort } from './algorithms/bubbleSort';
+
+import styles from './app.css';
 
 const DATASIZE_MIN = 10;
 const DATASIZE_MAX = 250;
 const SPEED_MIN = 1;
 const SPEED_MAX = 300;
 
+
 function App() {
-  // state var animationSpeed is needed to update the slider ui as it changes
-  // ref var animationSpeedRef is needed to update the real time value in the animations loop
-  const [animationSpeed, setAnimationSpeed] = useState(15);
-  const animationSpeedRef = useRef(animationSpeed);
-
-  // set the data array behind the bars displayed on the screen   
-  const [data, setData] = useState([...Array(DATASIZE_MIN * DATASIZE_MIN)].map(() => randomize(10, 400)));
-  const barsCount = data.length;
-
-  // calculate gap between bars in pixels,
-  // width of the array bars container in pixels 
-  // and margin as half the gap on each side of the bar for even spacing of the array bars'
-  const gap = 2;
-  const containerWidth = 2000;
-  const totalGap = gap * (barsCount - 1);
-  const dynamicWidth = Math.round((containerWidth - totalGap) / barsCount);
-  const dynamicMargin = gap / 2;
+  // state var sortSpeed(from sortReducer) is needed to update the slider ui as it changes
+  // ref var sortSpeedRef is needed to update the real time value in the animations loop
+  const [sortState, dispatch] = useReducer(sortReducer, initialState);
+  const sortSpeedRef = useRef(sortState.sortSpeed);
+  const barsCount = sortState.data.length;
 
   async function animateSort() {
-    const animations = bubbleSort(data.slice());
-    const arrayBars = document.getElementsByClassName('bar');
+    const animations = bubbleSort(sortState.data.slice());
 
     for (const [_, animation] of Object.entries(animations)) {
       for (const [animationId, animationValue] of Object.entries(animation)) {
-        if (animationId === 'data_change') {
-          setData(animationValue);
+        // if animation object contains the data_change property 
+        // that means the array data has changed at that particular animation step
+        // so we update the state of the data to trigger a re-render and display the change. 
+        if (animation.data_change) {
+          dispatch({
+            type: 'changed_data',
+            data: animationValue,
+          });
           continue;
         }
 
-        arrayBars[animationId].style.backgroundColor = animationValue;
+        // change the color of the needed bar directly in the DOM.
+        arrayBarElements[animationId].style.backgroundColor = animationValue;
       }
 
-      await delay(animationSpeedRef.current); // ms
+      await delay(sortSpeedRef.current); // ms
     }
   }
 
   function handleDataSizeChange(event) {
-    // generate new array everytime dataSize is changed
-    const dataSize = parseFloat(event.target.value);
-    setData([...Array(dataSize)].map(() => randomize(10, 400)));
-
-    // recolor the bars as array is being resized
-    const arrayBars = document.getElementsByClassName('bar');
-    Array.from(arrayBars)
-      .forEach(bar => {
-        bar.style.backgroundColor = COLORS.DEFAULT
-      });
+    // generates new array everytime dataSize is changed
+    const nextDataSize = parseFloat(event.target.value);
+    dispatch({
+      type: 'changed_dataSize',
+      dataSize: nextDataSize
+    });
   }
 
-  function handleAnimationSpeedChange(event) {
+  function handleSortSpeedChange(event) {
     const nextSpeed = SPEED_MAX - parseFloat(event.target.value);
-    setAnimationSpeed(nextSpeed);
-    animationSpeedRef.current = nextSpeed;
+    sortSpeedRef.current = nextSpeed;
+    dispatch({
+      type: 'changed_speed',
+      sortSpeed: nextSpeed
+    });
   }
-
-  const dataComponent = data.map((value, id) => {
-    return (
-      <div key={id}
-        className='bar'
-        style={{
-          height: value,
-          width: dynamicWidth,
-          marginLeft: (id === 0) ? 0 : dynamicMargin,
-          marginRight: (id === barsCount - 1) ? 0 : dynamicMargin
-        }}>
-      </div>
-    )
-  });
 
   return (
     <>
-      <div className="app">
-        <div className='array'>
-          {dataComponent}
-        </div>
+      <div className={styles.appContainer}>
+        <ArrayBars
+          payload={sortState.data}
+          color={COLORS.DEFAULT}
+        />
         <Slider
-          slider={{ value: barsCount, min: DATASIZE_MIN, max: DATASIZE_MAX, handleChange: handleDataSizeChange }}
+          slider={{
+            value: barsCount,
+            min: DATASIZE_MIN,
+            max: DATASIZE_MAX,
+            handleChange: handleDataSizeChange
+          }}
           label={{ id: "size", description: "Array Size" }}
           info={barsCount}
         />
         <Slider
-          slider={{ value: SPEED_MAX - animationSpeed, min: SPEED_MIN, max: SPEED_MAX, handleChange: handleAnimationSpeedChange }}
+          slider={{
+            value: SPEED_MAX - sortState.sortSpeed,
+            min: SPEED_MIN,
+            max: SPEED_MAX,
+            handleChange: handleSortSpeedChange
+          }}
           label={{ id: "speed", description: "Animation Speed" }}
-          info={animationSpeed + 1 + ' ms'}
+          info={`${sortState.sortSpeed + 1} ms`}
         />
+        <button onClick={animateSort}>sort</button>
       </div>
-      <button onClick={animateSort}>sort</button>
     </>
   );
-}
-
-function randomize(min, max) {
-  return Math.floor(Math.random() * (max - min) + min);
 }
 
 export default App;

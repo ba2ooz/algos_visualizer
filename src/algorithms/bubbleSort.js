@@ -1,4 +1,4 @@
-import { COLORS } from "../utils/colors";
+import { COLORS } from "../shared/utils";
 
 export function bubbleSort(arr) {
     let animations = [];

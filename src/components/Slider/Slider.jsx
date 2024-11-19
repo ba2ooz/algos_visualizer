@@ -1,10 +1,10 @@
 import { useState } from "react";
 import styles from './Slider.module.css';
 
-export function Slider({slider, label, info}) {
+export function Slider({ slider, label, info }) {
     const [isInfoVisible, setIsInfoVisible] = useState(false);
-    const {value, min, max, handleChange} = slider;
-    const {id, description} = label;
+    const { value, min, max, handleChange } = slider;
+    const { id, description } = label;
 
     return (
         <>
@@ -21,7 +21,7 @@ export function Slider({slider, label, info}) {
                 />
                 <label htmlFor={id}>{description}</label>
             </div>
-            {isInfoVisible && <div className="info">{info}</div>}
+            {isInfoVisible && <div className={styles.info}>{info}</div>}
         </>
     )
 }

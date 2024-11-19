@@ -1,0 +1,13 @@
+.array {
+    width: auto;
+    margin: 0 5vw;
+    height: 70vh;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: end;
+}
+
+.bar {
+    border-radius: 1px 1px 0px 0px;
+}

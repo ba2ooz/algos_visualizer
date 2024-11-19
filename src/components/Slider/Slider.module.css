@@ -5,6 +5,30 @@
     margin: 0 10px;
 }
 
+.info {
+    position: fixed;
+    top: 10%;
+    height: 7rem;
+    width: auto;
+    left: 37%;
+    right: 37%;
+    background-color: azure;
+    font-size: 5rem;
+    z-index: 999;
+    background: linear-gradient(to right,
+            rgba(255, 255, 255, 0) 0%,      /* fully transparent */
+            rgba(255, 255, 255, 0.5) 25%,   /* semi-transparent */
+            rgba(255, 255, 255, 1) 50%,     /* fully opaque */
+            rgba(255, 255, 255, 0.5) 75%,   /* semi-transparent */
+            rgba(255, 255, 255, 0) 100%     /* fully transparent */
+        );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #000c23;
+}
+
 label {
     color: aliceblue;
     margin: 0 10px;
