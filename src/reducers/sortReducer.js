@@ -1,7 +1,7 @@
 import { COLORS, randomize } from "../shared/utils";
 
 export const initialState = {
-    sortSpeed: 15,
+    speed: 15,
     data: [...Array(100)].map(() => randomize(10, 400)),
     animations: [...Array(100)].map(() => COLORS.DEFAULT)
 };
@@ -33,7 +33,7 @@ export function sortReducer(state, action) {
         case 'changed_speed': {
             return {
                 ...state,
-                sortSpeed: action.sortSpeed
+                speed: action.sortSpeed
             };
         }
         default: {

@@ -15,7 +15,7 @@ const SPEED_MAX = 300;
 
 
 function App() {
-  // state var sortSpeed(from sortReducer) is needed to update the slider ui as it changes
+  // state var speed(from sortReducer) is needed to update the slider ui as it changes
   // ref var sortSpeedRef is needed to update the real time value in the animations loop
   const [sortState, dispatch] = useReducer(sortReducer, initialState);
   const sortSpeedRef = useRef(sortState.sortSpeed);
@@ -85,13 +85,13 @@ function App() {
         />
         <Slider
           slider={{
-            value: SPEED_MAX - sortState.sortSpeed,
+            value: SPEED_MAX - sortState.speed,
             min: SPEED_MIN,
             max: SPEED_MAX,
             handleChange: handleSortSpeedChange
           }}
           label={{ id: "speed", description: "Animation Speed" }}
-          info={`${sortState.sortSpeed + 1} ms`}
+          info={`${sortState.speed + 1} ms`}
         />
         <button onClick={animateSort}>sort</button>
       </div>
