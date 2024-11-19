@@ -3,7 +3,7 @@ import { COLORS, delay } from './shared/utils';
 
 import { ArrayBars, arrayBarElements } from './components/ArrayBars/ArrayBars';
 import { Slider } from './components/Slider/Slider';
-import { initialState, sortReducer } from './sortReducer';
+import { initialState, sortReducer } from './reducers/sortReducer';
 import { bubbleSort } from './algorithms/bubbleSort';
 
 import styles from './app.css';

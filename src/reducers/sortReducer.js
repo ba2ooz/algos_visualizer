@@ -1,4 +1,4 @@
-import { randomize } from "./shared/utils";
+import { randomize } from "../shared/utils";
 
 export const initialState = {
     sortSpeed: 15,
