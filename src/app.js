@@ -1,4 +1,4 @@
-import { useRef, useReducer } from 'react';
+import { useRef, useReducer, useState } from 'react';
 import { delay } from './shared/utils';
 import { availableAlgorithms } from './algorithms/algorithmsCollection';
 
@@ -19,14 +19,16 @@ function App() {
   // ref var sortSpeedRef is needed to update the real time value in the animations loop
   const [sortState, dispatch] = useReducer(sortReducer, initialState);
   const sortSpeedRef = useRef(sortState.sortSpeed);
+  const isAnimationRunningRef = useRef(false);
+  const [isControlDisabled, setIsControlDisabled] = useState(false);
   const barsCount = sortState.data.length;
 
-  async function animateSort() {
-    const dataCopy = sortState.data.slice();
-    const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
-
+  const animateSort = async (animations) => {
     for (const [_, animation] of Object.entries(animations)) {
       for (const [animationId, animationValue] of Object.entries(animation)) {
+        if (!isAnimationRunningRef.current)
+          return;
+
         // if animation object contains the data_change property 
         // that means the array data has changed at that particular animation step
         // so we update the state of the data to trigger a re-render and display the change. 
@@ -49,6 +51,23 @@ function App() {
     }
   }
 
+  const startSort = async () => {
+    dispatch({
+      type: 'changed_animation_reset'
+    });
+    setIsControlDisabled(true);
+    isAnimationRunningRef.current = true;
+    const dataCopy = sortState.data.slice();
+    const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
+    await animateSort(animations);
+    setIsControlDisabled(false);
+  }
+
+  const stopSort = () => {
+    setIsControlDisabled(false);
+    isAnimationRunningRef.current = false;
+  }
+
   return (
     <>
       <div className={styles.appContainer}>
@@ -57,6 +76,7 @@ function App() {
           backbgroundColors={sortState.animations}
         />
         <Controls
+          disabled={isControlDisabled}
           dispatch={dispatch}
           selectControlOptions={availableAlgorithms}
           dataSizeControl={{
@@ -72,8 +92,9 @@ function App() {
             info: sortState.speed + 1,
           }}
           buttons={{
-            handleSortPlay: animateSort
+            handleSortPlay: startSort
           }} />
+        <button disabled={!isControlDisabled} onClick={stopSort}>stop</button>
       </div>
     </>
   );

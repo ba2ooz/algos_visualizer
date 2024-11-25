@@ -37,6 +37,12 @@ export function sortReducer(state, action) {
                 animations: newAnimations
             };
         }
+        case 'changed_animation_reset': {
+            return {
+                ...state,
+                animations: [...Array(state.animations.length)].map(() => COLORS.DEFAULT)
+            };
+        }
         case 'changed_speed': {
             return {
                 ...state,

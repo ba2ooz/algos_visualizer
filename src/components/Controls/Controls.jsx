@@ -1,7 +1,7 @@
 import { Slider } from '../../components/Slider/Slider';
 import styles from './Controls.module.css';
 
-export function Controls({ dispatch, selectControlOptions, dataSizeControl, speedControl, buttons }) {
+export function Controls({ disabled, dispatch, selectControlOptions, dataSizeControl, speedControl, buttons }) {
     const selectLabel = 'Algorithms';
 
     function handleDataSizeChange(event) {
@@ -33,9 +33,13 @@ export function Controls({ dispatch, selectControlOptions, dataSizeControl, spee
     return (
         <>
             <div className={styles.controls}>
-                <button onClick={buttons.handleSortPlay}>Sort</button>
+                <button
+                    disabled={disabled}
+                    onClick={buttons.handleSortPlay}
+                >Sort</button>
 
                 <select
+                    disabled={disabled}
                     name={selectLabel}
                     id={selectLabel}
                     onChange={handleAlgoSelectChange}
@@ -55,6 +59,7 @@ export function Controls({ dispatch, selectControlOptions, dataSizeControl, spee
 
                 <Slider
                     slider={{
+                        disabled: disabled,
                         value: dataSizeControl.value,
                         min: dataSizeControl.min,
                         max: dataSizeControl.max,

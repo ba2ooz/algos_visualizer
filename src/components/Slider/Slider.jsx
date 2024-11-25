@@ -36,6 +36,7 @@ export function Slider({ slider, label, info }) {
                 className={styles.sliderContainer}
                 onWheel={handleWheelScroll} >
                 <input
+                    disabled={slider.disabled}
                     type="range"
                     id={id}
                     value={value}
