@@ -3,7 +3,6 @@ import { delay } from './shared/utils';
 import { availableAlgorithms } from './algorithms/algorithmsCollection';
 
 import { ArrayBars } from './components/ArrayBars/ArrayBars';
-import { Slider } from './components/Slider/Slider';
 import { Controls } from './components/Controls/Controls';
 import { initialState, sortReducer } from './reducers/sortReducer';
 
@@ -50,32 +49,6 @@ function App() {
     }
   }
 
-  function handleDataSizeChange(event) {
-    // generates new array everytime dataSize is changed
-    const nextDataSize = parseFloat(event.target.value);
-    dispatch({
-      type: 'changed_dataSize',
-      dataSize: nextDataSize
-    });
-  }
-
-  function handleSortSpeedChange(event) {
-    const nextSpeed = SPEED_MAX - parseFloat(event.target.value);
-    sortSpeedRef.current = nextSpeed;
-    dispatch({
-      type: 'changed_speed',
-      sortSpeed: nextSpeed
-    });
-  }
-
-  function handleAlgoSelectChange(event) {
-    const nextAlgorithm = event.target.value;
-    dispatch({
-      type: 'changed_algorithm',
-      selectedAlgorithm: nextAlgorithm
-    });
-  }
-
   return (
     <>
       <div className={styles.appContainer}>
@@ -84,35 +57,23 @@ function App() {
           backbgroundColors={sortState.animations}
         />
         <Controls
-          select={{
-            options: availableAlgorithms,
-            label: 'Algorithms',
-            onChange: handleAlgoSelectChange
+          dispatch={dispatch}
+          selectControlOptions={availableAlgorithms}
+          dataSizeControl={{
+            value: barsCount,
+            min: DATASIZE_MIN,
+            max: DATASIZE_MAX,
+          }}
+          speedControl={{
+            speedRef: sortSpeedRef,
+            value: SPEED_MAX - sortState.speed,
+            min: SPEED_MIN,
+            max: SPEED_MAX,
+            info: sortState.speed + 1,
           }}
           buttons={{
             handleSortPlay: animateSort
           }} />
-
-        <Slider
-          slider={{
-            value: barsCount,
-            min: DATASIZE_MIN,
-            max: DATASIZE_MAX,
-            handleChange: handleDataSizeChange
-          }}
-          label={{ id: "size", description: "Array Size" }}
-          info={barsCount}
-        />
-        <Slider
-          slider={{
-            value: SPEED_MAX - sortState.speed,
-            min: SPEED_MIN,
-            max: SPEED_MAX,
-            handleChange: handleSortSpeedChange
-          }}
-          label={{ id: "speed", description: "Animation Speed" }}
-          info={`${sortState.speed + 1} ms`}
-        />
       </div>
     </>
   );
