@@ -2,12 +2,19 @@ import { COLORS, randomize } from "../shared/utils";
 
 export const initialState = {
     speed: 15,
+    algorithm: 0, // represents an index
     data: [...Array(100)].map(() => randomize(10, 400)),
     animations: [...Array(100)].map(() => COLORS.DEFAULT)
 };
 
 export function sortReducer(state, action) {
     switch (action.type) {
+        case 'changed_algorithm': {
+            return {
+                ...state,
+                algorithm: action.selectedAlgorithm
+            }
+        }
         case 'changed_data': {
             return {
                 ...state,

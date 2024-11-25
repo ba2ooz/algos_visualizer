@@ -1,10 +1,11 @@
 import { useRef, useReducer } from 'react';
 import { delay } from './shared/utils';
+import { availableAlgorithms } from './algorithms/algorithmsCollection';
 
 import { ArrayBars } from './components/ArrayBars/ArrayBars';
 import { Slider } from './components/Slider/Slider';
+import { Controls } from './components/Controls/Controls';
 import { initialState, sortReducer } from './reducers/sortReducer';
-import { bubbleSort } from './algorithms/bubbleSort';
 
 import styles from './app.css';
 
@@ -22,7 +23,8 @@ function App() {
   const barsCount = sortState.data.length;
 
   async function animateSort() {
-    const animations = bubbleSort(sortState.data.slice());
+    const dataCopy = sortState.data.slice();
+    const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
 
     for (const [_, animation] of Object.entries(animations)) {
       for (const [animationId, animationValue] of Object.entries(animation)) {
@@ -66,6 +68,14 @@ function App() {
     });
   }
 
+  function handleAlgoSelectChange(event) {
+    const nextAlgorithm = event.target.value;
+    dispatch({
+      type: 'changed_algorithm',
+      selectedAlgorithm: nextAlgorithm
+    });
+  }
+
   return (
     <>
       <div className={styles.appContainer}>
@@ -73,6 +83,16 @@ function App() {
           payload={sortState.data}
           backbgroundColors={sortState.animations}
         />
+        <Controls
+          select={{
+            options: availableAlgorithms,
+            label: 'Algorithms',
+            onChange: handleAlgoSelectChange
+          }}
+          buttons={{
+            handleSortPlay: animateSort
+          }} />
+
         <Slider
           slider={{
             value: barsCount,
@@ -93,7 +113,6 @@ function App() {
           label={{ id: "speed", description: "Animation Speed" }}
           info={`${sortState.speed + 1} ms`}
         />
-        <button onClick={animateSort}>sort</button>
       </div>
     </>
   );
