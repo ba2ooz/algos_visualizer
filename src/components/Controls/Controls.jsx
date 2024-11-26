@@ -12,7 +12,7 @@ export function Controls({
     const [isControlDisabled, setIsControlDisabled] = useState(false);
     const selectLabel = 'Algorithms';
 
-    function handleDataSizeChange(event) {
+    const handleDataSizeChange = (event) => {
         // generates new array everytime dataSize is changed
         const nextDataSize = parseFloat(event.target.value);
         dispatch({
@@ -21,7 +21,7 @@ export function Controls({
         });
     }
 
-    function handleSortSpeedChange(event) {
+    const handleSortSpeedChange = (event) => {
         const nextSpeed = speedControl.max - parseFloat(event.target.value);
         speedControl.speedRef.current = nextSpeed;
         dispatch({
@@ -30,7 +30,7 @@ export function Controls({
         });
     }
 
-    function handleAlgoSelectChange(event) {
+    const handleAlgoSelectChange = (event) => {
         const nextAlgorithm = event.target.value;
         dispatch({
             type: 'changed_algorithm',
@@ -38,17 +38,19 @@ export function Controls({
         });
     }
 
-    const start = async () => {
+    const handleStart = async () => {
         dispatch({
             type: 'changed_animation_reset'
         });
+
         setIsControlDisabled(true);
         animationControl.isAnimationRunningRef.current = true;
         await animationControl.startAnimation();
+
         setIsControlDisabled(false);
     }
 
-    const stop = () => {
+    const handleStop = () => {
         setIsControlDisabled(false);
         animationControl.isAnimationRunningRef.current = false;
     }
@@ -56,11 +58,8 @@ export function Controls({
     return (
         <>
             <div className={styles.controls}>
-                <button
-                    disabled={isControlDisabled}
-                    onClick={start}
-                >Sort</button>
-                <button disabled={!isControlDisabled} onClick={stop}>stop</button>
+                <button onClick={isControlDisabled ? handleStop : handleStart}
+                >{isControlDisabled ? 'Stop' : 'Start'}</button>
 
                 <select
                     disabled={isControlDisabled}
