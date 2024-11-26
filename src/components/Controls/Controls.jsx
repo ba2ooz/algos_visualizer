@@ -1,7 +1,15 @@
+import { useState } from 'react';
 import { Slider } from '../../components/Slider/Slider';
 import styles from './Controls.module.css';
 
-export function Controls({ disabled, dispatch, selectControlOptions, dataSizeControl, speedControl, buttons }) {
+export function Controls({
+    selectControlOptions,
+    animationControl,
+    dataSizeControl,
+    speedControl,
+    dispatch }) {
+
+    const [isControlDisabled, setIsControlDisabled] = useState(false);
     const selectLabel = 'Algorithms';
 
     function handleDataSizeChange(event) {
@@ -30,16 +38,32 @@ export function Controls({ disabled, dispatch, selectControlOptions, dataSizeCon
         });
     }
 
+    const start = async () => {
+        dispatch({
+            type: 'changed_animation_reset'
+        });
+        setIsControlDisabled(true);
+        animationControl.isAnimationRunningRef.current = true;
+        await animationControl.startAnimation();
+        setIsControlDisabled(false);
+    }
+
+    const stop = () => {
+        setIsControlDisabled(false);
+        animationControl.isAnimationRunningRef.current = false;
+    }
+
     return (
         <>
             <div className={styles.controls}>
                 <button
-                    disabled={disabled}
-                    onClick={buttons.handleSortPlay}
+                    disabled={isControlDisabled}
+                    onClick={start}
                 >Sort</button>
+                <button disabled={!isControlDisabled} onClick={stop}>stop</button>
 
                 <select
-                    disabled={disabled}
+                    disabled={isControlDisabled}
                     name={selectLabel}
                     id={selectLabel}
                     onChange={handleAlgoSelectChange}
@@ -59,24 +83,22 @@ export function Controls({ disabled, dispatch, selectControlOptions, dataSizeCon
 
                 <Slider
                     slider={{
-                        disabled: disabled,
-                        value: dataSizeControl.value,
-                        min: dataSizeControl.min,
-                        max: dataSizeControl.max,
+                        ...dataSizeControl,
+                        disabled: isControlDisabled,
+                        infoTooltip: dataSizeControl.value,
+                        label: { id: "size", description: "Array Size" },
                         handleChange: handleDataSizeChange,
                     }}
-                    info={dataSizeControl.value}
-                    label={{ id: "size", description: "Array Size" }}
                 />
                 <Slider
                     slider={{
                         value: speedControl.value,
                         min: speedControl.min,
                         max: speedControl.max,
+                        infoTooltip: `${speedControl.info} ms`,
+                        label: { id: "speed", description: "Animation Speed" },
                         handleChange: handleSortSpeedChange,
                     }}
-                    info={`${speedControl.info} ms`}
-                    label={{ id: "speed", description: "Animation Speed" }}
                 />
             </div>
         </>

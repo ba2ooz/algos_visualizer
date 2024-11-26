@@ -1,4 +1,4 @@
-import { useRef, useReducer, useState } from 'react';
+import { useRef, useReducer } from 'react';
 import { delay } from './shared/utils';
 import { availableAlgorithms } from './algorithms/algorithmsCollection';
 
@@ -20,10 +20,12 @@ function App() {
   const [sortState, dispatch] = useReducer(sortReducer, initialState);
   const sortSpeedRef = useRef(sortState.sortSpeed);
   const isAnimationRunningRef = useRef(false);
-  const [isControlDisabled, setIsControlDisabled] = useState(false);
   const barsCount = sortState.data.length;
 
-  const animateSort = async (animations) => {
+  const animateSort = async () => {
+    const dataCopy = sortState.data.slice();
+    const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
+
     for (const [_, animation] of Object.entries(animations)) {
       for (const [animationId, animationValue] of Object.entries(animation)) {
         if (!isAnimationRunningRef.current)
@@ -51,21 +53,23 @@ function App() {
     }
   }
 
-  const startSort = async () => {
-    dispatch({
-      type: 'changed_animation_reset'
-    });
-    setIsControlDisabled(true);
-    isAnimationRunningRef.current = true;
-    const dataCopy = sortState.data.slice();
-    const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
-    await animateSort(animations);
-    setIsControlDisabled(false);
+  const dataSizeControlProps = {
+    value: barsCount,
+    min: DATASIZE_MIN,
+    max: DATASIZE_MAX,
   }
 
-  const stopSort = () => {
-    setIsControlDisabled(false);
-    isAnimationRunningRef.current = false;
+  const speedControlProps = {
+    speedRef: sortSpeedRef,
+    value: SPEED_MAX - sortState.speed,
+    min: SPEED_MIN,
+    max: SPEED_MAX,
+    info: sortState.speed + 1,
+  }
+
+  const animationControlProps = {
+    startAnimation: animateSort,
+    isAnimationRunningRef: isAnimationRunningRef
   }
 
   return (
@@ -76,25 +80,12 @@ function App() {
           backbgroundColors={sortState.animations}
         />
         <Controls
-          disabled={isControlDisabled}
-          dispatch={dispatch}
           selectControlOptions={availableAlgorithms}
-          dataSizeControl={{
-            value: barsCount,
-            min: DATASIZE_MIN,
-            max: DATASIZE_MAX,
-          }}
-          speedControl={{
-            speedRef: sortSpeedRef,
-            value: SPEED_MAX - sortState.speed,
-            min: SPEED_MIN,
-            max: SPEED_MAX,
-            info: sortState.speed + 1,
-          }}
-          buttons={{
-            handleSortPlay: startSort
-          }} />
-        <button disabled={!isControlDisabled} onClick={stopSort}>stop</button>
+          animationControl={animationControlProps}
+          dataSizeControl={dataSizeControlProps}
+          speedControl={speedControlProps}
+          dispatch={dispatch}
+        />
       </div>
     </>
   );

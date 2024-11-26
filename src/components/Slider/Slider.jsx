@@ -2,27 +2,24 @@ import { useState, useRef } from "react";
 
 import styles from './Slider.module.css';
 
-export function Slider({ slider, label, info }) {
+export function Slider({ slider }) {
     const [isInfoVisible, setIsInfoVisible] = useState(false);
     const scrollTimeoutRef = useRef(null);
-    const { value, min, max, handleChange } = slider;
-    const { id, description } = label;
 
-    function handleWheelScroll(event) {
-        // show info box on scroll
-        setIsInfoVisible(true);
-
+    const handleWheelScroll = (event) => {
         event.preventDefault();
-        const step = 3;
-        const delta = event.deltaY < 0 ? step : -step;
-        const newValue = Math.min(max, Math.max(min, value + delta));
-        event.target.value = newValue;
-        handleChange(event);
 
         // clear previous timeout when new scroll occurs
-        if (scrollTimeoutRef.current) {
+        if (scrollTimeoutRef.current) 
             clearTimeout(scrollTimeoutRef.current);
-        }
+
+        // show info box on scroll
+        setIsInfoVisible(true);
+        const step = 3;
+        const delta = event.deltaY < 0 ? step : -step;
+        const newValue = Math.min(slider.max, Math.max(slider.min, slider.value + delta));
+        event.target.value = newValue;
+        slider.handleChange(event);
 
         // set new timeout to hide the info after a delay
         scrollTimeoutRef.current = setTimeout(() => {
@@ -34,21 +31,21 @@ export function Slider({ slider, label, info }) {
         <>
             <div
                 className={styles.sliderContainer}
-                onWheel={handleWheelScroll} >
+                onWheel={!slider.disabled ? handleWheelScroll : null} >
                 <input
                     disabled={slider.disabled}
                     type="range"
-                    id={id}
-                    value={value}
-                    min={min}
-                    max={max}
+                    id={slider.label.id}
+                    value={slider.value}
+                    min={slider.min}
+                    max={slider.max}
                     onMouseDown={() => setIsInfoVisible(true)}
                     onMouseUp={() => setIsInfoVisible(false)}
-                    onChange={handleChange}
+                    onChange={slider.handleChange}
                 />
-                <label htmlFor={id}>{description}</label>
+                <label htmlFor={slider.label.id}>{slider.label.description}</label>
             </div>
-            {isInfoVisible && <div className={styles.info}>{info}</div>}
+            {isInfoVisible && <div className={styles.info}>{slider.infoTooltip}</div>}
         </>
     )
 }
