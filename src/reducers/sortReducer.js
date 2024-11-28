@@ -1,10 +1,14 @@
 import { COLORS, randomize } from "../shared/utils";
 
+const MIN_DATA_VALUE=10;
+const MAX_DATA_VALUE=350;
+const INIT_DATA_SIZE=70;
+
 export const initialState = {
     speed: 15,
     algorithm: 0, // represents an index
-    data: [...Array(100)].map(() => randomize(10, 400)),
-    animations: [...Array(100)].map(() => COLORS.DEFAULT)
+    data: [...Array(INIT_DATA_SIZE)].map(() => randomize(MIN_DATA_VALUE, MAX_DATA_VALUE)),
+    animations: [...Array(INIT_DATA_SIZE)].map(() => COLORS.DEFAULT)
 };
 
 export function sortReducer(state, action) {
@@ -24,7 +28,7 @@ export function sortReducer(state, action) {
         case 'changed_dataSize': {
             return {
                 ...state,
-                data: [...Array(action.dataSize)].map(() => randomize(10, 400)),
+                data: [...Array(action.dataSize)].map(() => randomize(MIN_DATA_VALUE, MAX_DATA_VALUE)),
                 animations: [...Array(action.dataSize)].map(() => COLORS.DEFAULT)
             };
         }

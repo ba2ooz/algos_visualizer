@@ -13,17 +13,17 @@ export function Controls({
     const [isControlDisabled, setIsControlDisabled] = useState(false);
     const svgSize = 28;
 
-    const handleDataSizeChange = (event) => {
+    const handleDataSizeChange = (value) => {
         // generates new array everytime dataSize is changed
-        const nextDataSize = parseFloat(event.target.value);
+        const nextDataSize = parseFloat(value);
         dispatch({
             type: 'changed_dataSize',
             dataSize: nextDataSize
         });
     }
 
-    const handleSortSpeedChange = (event) => {
-        const nextSpeed = speedControl.max - parseFloat(event.target.value);
+    const handleSortSpeedChange = (value) => {
+        const nextSpeed = speedControl.max - parseFloat(value);
         speedControl.speedRef.current = nextSpeed;
         dispatch({
             type: 'changed_speed',

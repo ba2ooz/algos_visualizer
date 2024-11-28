@@ -18,8 +18,7 @@ export function Slider({ slider }) {
         const step = 3;
         const delta = event.deltaY < 0 ? step : -step;
         const newValue = Math.min(slider.max, Math.max(slider.min, slider.value + delta));
-        event.target.value = newValue;
-        slider.handleChange(event);
+        slider.handleChange(newValue);
 
         // set new timeout to hide the info after a delay
         scrollTimeoutRef.current = setTimeout(() => {
@@ -41,8 +40,9 @@ export function Slider({ slider }) {
                     max={slider.max}
                     onMouseDown={() => setIsInfoVisible(true)}
                     onMouseUp={() => setIsInfoVisible(false)}
-                    onChange={slider.handleChange}
+                    onChange={(e) => slider.handleChange(e.target.value)}
                 />
+                <output>{slider.infoTooltip}</output>
                 <label htmlFor={slider.label.id}>{slider.label.description}</label>
             </div>
             {isInfoVisible && <div className={styles.info}>{slider.infoTooltip}</div>}

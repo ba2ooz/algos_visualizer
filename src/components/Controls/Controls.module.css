@@ -7,8 +7,8 @@
 
 .row {
     display: flex;
-    margin-top: 40px;
-    gap: 25rem;
+    margin-top: 35px;
+    gap: 30vw;
 }
 
 .row1 {
@@ -33,4 +33,20 @@
 .playStopButton:hover {
     background: #26A69A;
     border-radius: 2px;
+}
+
+@media screen and (max-width: 568px) {
+    .row {
+        flex-direction: column;
+        align-items: center; 
+        margin-top: 1.5rem; 
+        gap: 1rem; 
+    }
+
+    .row1 {
+        margin-left: 0; 
+        margin-top: 1rem; 
+        flex-direction: row; 
+        align-items: center; 
+    }
 }
