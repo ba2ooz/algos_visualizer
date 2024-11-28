@@ -1,5 +1,6 @@
 .sliderContainer {
     display: flex;
+    flex-direction: column;
     justify-content: start;
     align-items: center;
     margin: 0 10px;
@@ -29,7 +30,15 @@
     color: #000c23;
 }
 
-label {
-    color: aliceblue;
-    margin: 0 10px;
+input[type="range"] {
+    accent-color: #ff4500;
+    cursor: ew-resize;
+}
+
+input[type="range"]:disabled {
+    cursor: not-allowed;
+}
+
+input[type="range"]:disabled + label {
+    color: gray; 
 }

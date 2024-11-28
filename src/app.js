@@ -80,7 +80,7 @@ function App() {
           backbgroundColors={sortState.animations}
         />
         <Controls
-          selectControlOptions={availableAlgorithms}
+          selectControlOptions={availableAlgorithms.map((algorithm) => { return algorithm.name })}
           animationControl={animationControlProps}
           dataSizeControl={dataSizeControlProps}
           speedControl={speedControlProps}
