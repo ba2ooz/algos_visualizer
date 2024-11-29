@@ -1,65 +1,58 @@
 import { COLORS } from "../shared/utils";
 
 export function bubbleSort(arr) {
-    let animations = [];
-    bubbleSortStep(animations, arr, 0, 0);
-    return animations;
-}
+    if (arr.length < 1)
+        return;
 
-function bubbleSortStep(animations, arr, i, j) {
-    const pos1 = j;
-    const pos2 = j + 1;
     let animation_step = {};
+    let animations = [];
+    let n = arr.length;
+    let i, j, swapped;
 
-    // stop, arr is sorted
-    if (i >= arr.length - 1) {
-        animation_step = { [pos1]: COLORS.SORTED };
-        animations.push(animation_step);
+    for (i = 0; i < n - 1; i++) {
+        swapped = false;
+        let nextSortedBubblePos = n - i - 1;
 
-        return;
-    }
+        for (j = 0; j < nextSortedBubblePos; j++) {
+            // currently evaluated positions 
+            animation_step = color('compared', j, j + 1);
+            animations.push(animation_step);
 
-    // move to next iteration
-    if (pos1 >= arr.length - i - 1) {
+            if (arr[j] > arr[j + 1]) {
+                swap(arr, j, j + 1);
+                swapped = true;
+
+                // swap accured, push new copy of the modifed array to ilustrate the swap 
+                animation_step = { data_change: arr.slice() };
+                animations.push(animation_step);
+            }
+
+            // reset default colour on either compared or swapped items
+            animation_step = color('reset', j, j + 1);
+            animations.push(animation_step);
+        }
+
+        if (!swapped) {
+            // no swap accured during last comparison iteration
+            // array is already sorted, push only sorted animations.
+            do {
+                animation_step = color('sorted', nextSortedBubblePos - 1, nextSortedBubblePos);
+                animations.push(animation_step);
+            } while ((nextSortedBubblePos--) > 0)
+
+            break;
+        }
+
         // one bubble arrived at the top so color it accordingly
-        animation_step = {
-            [arr.length - i - 2]: COLORS.DEFAULT,
-            [arr.length - i - 1]: COLORS.SORTED,
-        };
-        animations.push(animation_step);
-
-        bubbleSortStep(animations, arr, i + 1, 0);
-
-        return;
-    }
-
-    // currently evaluated positions 
-    animation_step = {
-        [pos1]: COLORS.COMPARED,
-        [pos2]: COLORS.COMPARED,
-    };
-    animations.push(animation_step);
-
-    if (arr[pos1] > arr[pos2]) {
-        swap(arr, pos1, pos2);
-
-        animation_step = {
-            //[pos1]: COLORS.SORTED,
-            //[pos2]: COLORS.SORTED,
-            data_change: arr.slice()
-        };
+        animation_step = color('sorted', nextSortedBubblePos - 1, nextSortedBubblePos);
         animations.push(animation_step);
     }
 
-    // reset default colour on either compared or swapped items
-    animation_step = {
-        [pos1]: COLORS.DEFAULT,
-        [pos2]: COLORS.DEFAULT,
-    };
+    // whole arr is sorted, color the last position.
+    animation_step = color('sorted', 0, null);
     animations.push(animation_step);
 
-    // move to the next iteration
-    bubbleSortStep(animations, arr, i, pos2);
+    return animations;
 }
 
 function swap(arr, i, j) {
@@ -67,3 +60,27 @@ function swap(arr, i, j) {
     arr[i] = arr[j];
     arr[j] = aux;
 };
+
+function color(action, pos1, pos2) {
+    switch (action) {
+        case 'compared':
+            return {
+                [pos1]: COLORS.COMPARED,
+                [pos2]: COLORS.COMPARED,
+            };
+        case 'reset':
+            return {
+                [pos1]: COLORS.DEFAULT,
+                [pos2]: COLORS.DEFAULT,
+            };
+        case 'sorted': {
+            if (pos2 !== null && pos2 > pos1)
+                return {
+                    [pos1]: COLORS.DEFAULT,
+                    [pos2]: COLORS.SORTED,
+                };
+
+            return { [pos1]: COLORS.SORTED };
+        };
+    }
+}
