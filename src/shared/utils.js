@@ -1,4 +1,6 @@
 export const COLORS = {
+    PIVOT: 'white',
+    INACTIVE: 'gray',
     COMPARED: 'purple',
     SORTED: 'green',
     DEFAULT: 'gold' 
