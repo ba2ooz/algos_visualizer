@@ -23,7 +23,7 @@ export function bubbleSort(arr) {
                 swapped = true;
 
                 // swap accured, push new copy of the modifed array to ilustrate the swap 
-                animation_step = { data_change: arr.slice() };
+                animation_step = { data_change: { [j]: arr[j], [j + 1]: arr[j + 1] } };
                 animations.push(animation_step);
             }
 

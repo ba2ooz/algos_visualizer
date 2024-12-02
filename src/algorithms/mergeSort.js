@@ -106,7 +106,7 @@ function merge(arr, left, mid, right) {
 
             // keep a copy of the changed original array data and indexes
             // to build the sort animations array after merge is done
-            auxArr.MergedData[auxId] = arr.slice();
+            auxArr.MergedData[auxId] = { [k]: R[j] };
             auxArr.K[auxId++] = k;
             j++;
         } else {
@@ -123,7 +123,7 @@ function merge(arr, left, mid, right) {
 
             // keep a copy of the changed original array data and indexes
             // to build the sort animations array after merge is done
-            auxArr.MergedData[auxId] = arr.slice();
+            auxArr.MergedData[auxId] = { [k]: L[i] };
             auxArr.K[auxId++] = k;
             i++;
         }
@@ -143,7 +143,7 @@ function merge(arr, left, mid, right) {
         animations.push(animation_step);
 
         arr[k] = L[i];
-        auxArr.MergedData[auxId] = arr.slice();
+        auxArr.MergedData[auxId] = { [k]: L[i] };
         auxArr.K[auxId++] = k;
 
         k++;
@@ -164,7 +164,7 @@ function merge(arr, left, mid, right) {
         animations.push(animation_step);
 
         arr[k] = R[j];
-        auxArr.MergedData[auxId] = arr.slice();
+        auxArr.MergedData[auxId] = { [k]: R[j] };
         auxArr.K[auxId++] = k;
 
         k++;

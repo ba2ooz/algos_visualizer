@@ -20,9 +20,13 @@ export function sortReducer(state, action) {
             }
         }
         case 'changed_data': {
+            const newData = [...state.data];
+            for (const [id, value] of Object.entries(action.data))
+                newData[id] = value;
+                
             return {
                 ...state,
-                data: action.data
+                data: newData
             };
         }
         case 'changed_dataSize': {
