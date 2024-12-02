@@ -47,19 +47,25 @@ function merge(arr, left, mid, right) {
     animation_step = {};
 
     for (let i = 0; i < N1; i++) {
-        // copy the left subarray data to collection L
+        // copy the left subarray data to temp collection L
         L[i] = arr[left + i];
-        // note the left subarray data index
+
+        // note from which index in the original array the data is being copied over.
+        // this will be used to create the comparison animation between L[i] and R[i] 
         auxArr.L[i] = left + i;
+
         // mark the left subarray as active with the appropriate color  
         animation_step = { ...animation_step, [left + i]: COLORS.DEFAULT };
     }
 
     for (let i = 0; i < N2; i++) {
-        // copy the right subarray data to collection R
+        // copy the right subarray data to temp collection R
         R[i] = arr[pivot + i];
-        // note the right subarray data index 
+
+        // note from which index in the original array the data is being copied over.
+        // this will be used to create the comparison animation between L[i] and R[i] 
         auxArr.R[i] = pivot + i;
+
         // mark the right subarray as active with the appropriate color
         animation_step = { ...animation_step, [pivot + i]: COLORS.DEFAULT };
     }
@@ -127,13 +133,13 @@ function merge(arr, left, mid, right) {
 
     // move the reamaining data in left subarray collection, L.
     while (i < N1) {
-        animation_step = color('compared', auxArr.L[i], k);
+        // only highlight the auxArr.L[i], at this point all L[i] data is sorted and simply copied over to arr[k]
+        animation_step = color('compared', auxArr.L[i], null);
         animations.push(animation_step);
 
-        // check for k == pivot instead of L[i] == pivot, because L[i] goes till pivot exclusively
-        animation_step = (k === pivot)
-            ? color('reset_pivot', pivot, auxArr.L[i])
-            : color('reset', auxArr.L[i], k);
+        // reset highlighted to default
+        // no pivot reset needed, pivot can only match R[0]
+        animation_step = color('reset', auxArr.L[i], null);
         animations.push(animation_step);
 
         arr[k] = L[i];
@@ -146,17 +152,15 @@ function merge(arr, left, mid, right) {
 
     // move the reamaining data in right subarray collection, R.
     while (j < N2) {
-        animation_step = color('compared', auxArr.R[j], k);
+
+        // no need to compare auxArr.R[j] to k, at this point they always point to same location
+        animation_step = color('compared', auxArr.R[j], null);
         animations.push(animation_step);
 
-        if (auxArr.R[j] === k && k === pivot)
-            animation_step = color('reset_pivot', k, null);
-        else if (k === pivot)
-            animation_step = color('reset_pivot', k, auxArr.R[j]);
-        else if (auxArr.R[j] === pivot)
-            animation_step = color('reset_pivot', auxArr.R[j], k);
-        else
-            animation_step = color('reset', auxArr.R[j], k);
+        // if j == 0 is true then auxArr.R[j] == pivot is also true regardless of pivot value
+        animation_step = (j === 0)
+            ? color('reset_pivot', auxArr.R[j], null)
+            : color('reset', auxArr.R[j], null);
         animations.push(animation_step);
 
         arr[k] = R[j];
@@ -172,29 +176,26 @@ function merge(arr, left, mid, right) {
     animations.push(animation_step);
 
     // start pushing the merge animations 
-    for (let k = 0; k < auxArr.MergedData.length; k++) {
-        animations.push(color('sorted', auxArr.K[k], null));
+    for (k = 0; k < auxArr.MergedData.length; k++) {
+        animations.push(color('sorted', auxArr.K[k]));
         animations.push({ data_change: auxArr.MergedData[k] });
     }
 }
 
-function color(action, pos1, pos2) {
+function color(action, pos1, pos2 = null) {
     switch (action) {
         case 'compared':
-            return {
-                [pos1]: COLORS.COMPARED,
-                [pos2]: COLORS.COMPARED,
-            };
+            return (pos2 === null)
+                ? { [pos1]: COLORS.COMPARED }
+                : { [pos1]: COLORS.COMPARED, [pos2]: COLORS.COMPARED };
         case 'reset':
-            return {
-                [pos1]: COLORS.DEFAULT,
-                [pos2]: COLORS.DEFAULT,
-            };
+            return (pos2 === null)
+                ? { [pos1]: COLORS.DEFAULT }
+                : { [pos1]: COLORS.DEFAULT, [pos2]: COLORS.DEFAULT };
         case 'reset_pivot':
-            return {
-                [pos1]: COLORS.PIVOT,
-                [pos2]: COLORS.DEFAULT,
-            }
+            return (pos2 === null)
+                ? { [pos1]: COLORS.PIVOT }
+                : { [pos1]: COLORS.PIVOT, [pos2]: COLORS.DEFAULT }
         case 'sorted': {
             return {
                 [pos1]: COLORS.SORTED,
