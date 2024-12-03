@@ -34,7 +34,6 @@ function merge(arr, left, mid, right) {
     auxArr.L = [];
     auxArr.R = [];
     auxArr.K = [];
-    auxArr.MergedData = [];
 
     let animation_step = {};
 
@@ -106,8 +105,8 @@ function merge(arr, left, mid, right) {
 
             // keep a copy of the changed original array data and indexes
             // to build the sort animations array after merge is done
-            auxArr.MergedData[auxId] = { [k]: R[j] };
-            auxArr.K[auxId++] = k;
+            auxArr.K[auxId] = { [k]: R[j] };
+            auxId++;
             j++;
         } else {
             // reset default animation for the compared indexes
@@ -123,8 +122,8 @@ function merge(arr, left, mid, right) {
 
             // keep a copy of the changed original array data and indexes
             // to build the sort animations array after merge is done
-            auxArr.MergedData[auxId] = { [k]: L[i] };
-            auxArr.K[auxId++] = k;
+            auxArr.K[auxId] = { [k]: L[i] };
+            auxId++;
             i++;
         }
 
@@ -143,9 +142,9 @@ function merge(arr, left, mid, right) {
         animations.push({ animation_step });
 
         arr[k] = L[i];
-        auxArr.MergedData[auxId] = { [k]: L[i] };
-        auxArr.K[auxId++] = k;
+        auxArr.K[auxId] = { [k]: L[i] };
 
+        auxId++;
         k++;
         i++;
     }
@@ -164,9 +163,9 @@ function merge(arr, left, mid, right) {
         animations.push({ animation_step });
 
         arr[k] = R[j];
-        auxArr.MergedData[auxId] = { [k]: R[j] };
-        auxArr.K[auxId++] = k;
+        auxArr.K[auxId] = { [k]: R[j] };
 
+        auxId++;
         k++;
         j++;
     }
@@ -176,9 +175,11 @@ function merge(arr, left, mid, right) {
     animations.push({ animation_step });
 
     // start pushing the merge animations 
-    for (k = 0; k < auxArr.MergedData.length; k++) {
-        animation_step = color('sorted', auxArr.K[k]);
-        animations.push({ data_change: auxArr.MergedData[k], animation_step });
+    for (auxId = 0; auxId < auxArr.K.length; auxId++) {
+        // Object.keys(auxArr.K[auxId])[0] contains the original array index that we want to mark as sorted
+        // auxArr.K[auxId] contains the id-value pair that has to be overriden in the og array
+        animation_step = color('sorted', Object.keys(auxArr.K[auxId])[0]);
+        animations.push({ data_change: auxArr.K[auxId], animation_step });
     }
 }
 
