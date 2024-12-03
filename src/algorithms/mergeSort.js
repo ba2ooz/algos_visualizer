@@ -41,7 +41,7 @@ function merge(arr, left, mid, right) {
     // mark the whole array as inactive with the appropriate color
     for (let i = 0; i < arr.length; i++)
         animation_step = { ...animation_step, [i]: COLORS.INACTIVE };
-    animations.push(animation_step);
+    animations.push({ animation_step });
 
     // prepare the animation_step object for the next animation
     animation_step = {};
@@ -71,13 +71,13 @@ function merge(arr, left, mid, right) {
     }
 
     // set the active subarray animation
-    animations.push(animation_step);
+    animations.push({ animation_step });
 
     // set active subarray mid point
     const activeSubArrayPivot = {
         [pivot]: COLORS.PIVOT
     };
-    animations.push(activeSubArrayPivot);
+    animations.push({ activeSubArrayPivot });
 
 
     let i = 0;      // index for left subarray
@@ -89,7 +89,7 @@ function merge(arr, left, mid, right) {
     while (i < N1 && j < N2) {
         // push compare animation for the corresponding indexes of the original array
         animation_step = color('compared', auxArr.L[i], auxArr.R[j]);
-        animations.push(animation_step);
+        animations.push({ animation_step });
 
         // the value in the right subarray is smaller than the one in the left
         if (L[i] > R[j]) {
@@ -98,7 +98,7 @@ function merge(arr, left, mid, right) {
             animation_step = (auxArr.R[j] === pivot)
                 ? color('reset_pivot', auxArr.R[j], auxArr.L[i])
                 : color('reset', auxArr.L[i], auxArr.R[j])
-            animations.push(animation_step);
+            animations.push({ animation_step });
 
             // the smaller value in the right subarray 
             // goes to the left in the original array
@@ -115,7 +115,7 @@ function merge(arr, left, mid, right) {
             animation_step = (auxArr.R[j] === pivot)
                 ? color('reset_pivot', auxArr.R[j], auxArr.L[i])
                 : color('reset', auxArr.L[i], auxArr.R[j])
-            animations.push(animation_step);
+            animations.push({ animation_step });
 
             // the smaller value in the left subarray 
             // goes to the left in the original array
@@ -135,12 +135,12 @@ function merge(arr, left, mid, right) {
     while (i < N1) {
         // only highlight the auxArr.L[i], at this point all L[i] data is sorted and simply copied over to arr[k]
         animation_step = color('compared', auxArr.L[i], null);
-        animations.push(animation_step);
+        animations.push({ animation_step });
 
         // reset highlighted to default
         // no pivot reset needed, pivot can only match R[0]
         animation_step = color('reset', auxArr.L[i], null);
-        animations.push(animation_step);
+        animations.push({ animation_step });
 
         arr[k] = L[i];
         auxArr.MergedData[auxId] = { [k]: L[i] };
@@ -155,13 +155,13 @@ function merge(arr, left, mid, right) {
 
         // no need to compare auxArr.R[j] to k, at this point they always point to same location
         animation_step = color('compared', auxArr.R[j], null);
-        animations.push(animation_step);
+        animations.push({ animation_step });
 
         // if j == 0 is true then auxArr.R[j] == pivot is also true regardless of pivot value
         animation_step = (j === 0)
             ? color('reset_pivot', auxArr.R[j], null)
             : color('reset', auxArr.R[j], null);
-        animations.push(animation_step);
+        animations.push({ animation_step });
 
         arr[k] = R[j];
         auxArr.MergedData[auxId] = { [k]: R[j] };
@@ -173,12 +173,12 @@ function merge(arr, left, mid, right) {
 
     // set pivot to default color
     animation_step = color('reset', pivot, null);
-    animations.push(animation_step);
+    animations.push({ animation_step });
 
     // start pushing the merge animations 
     for (k = 0; k < auxArr.MergedData.length; k++) {
-        animations.push(color('sorted', auxArr.K[k]));
-        animations.push({ data_change: auxArr.MergedData[k] });
+        animation_step = color('sorted', auxArr.K[k]);
+        animations.push({ data_change: auxArr.MergedData[k], animation_step });
     }
 }
 

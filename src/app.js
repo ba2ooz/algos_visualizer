@@ -34,7 +34,7 @@ function App() {
         // if animation object contains the data_change property 
         // that means the array data has changed at that particular animation step
         // so we update the state of the data to trigger a re-render and display the change. 
-        if (animation.data_change) {
+        if (animationId === 'data_change') {
           dispatch({
             type: 'changed_data',
             data: animationValue,
@@ -43,8 +43,7 @@ function App() {
         else {
           dispatch({
             type: 'changed_animation',
-            barId: animationId,
-            color: animationValue
+            colors: animationValue
           })
         }
       }

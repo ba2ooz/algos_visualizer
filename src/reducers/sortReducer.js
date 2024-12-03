@@ -38,7 +38,8 @@ export function sortReducer(state, action) {
         }
         case 'changed_animation': {
             const newAnimations = [...state.animations];
-            newAnimations[action.barId] = action.color;
+            for (const [id, value] of Object.entries(action.colors))
+                newAnimations[id] = value;
 
             return {
                 ...state,
