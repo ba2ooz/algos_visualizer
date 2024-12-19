@@ -24,18 +24,26 @@ function App() {
   const barsCount = sortState.data.length;
 
   const animateSort = async (animationResumeIndex, stepResumeIndex) => {
+
     // negative resume indexes mean new sort is requested (either data and size or algorithm has been changed)
     if (animationResumeIndex === -1 && stepResumeIndex === -1) {
-      animationResumeIndex = stepResumeIndex = 0;
+      // run selected sort algorithm and get the animations
       const dataCopy = sortState.data.slice();
       const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
       animationsCacheRef.current = animations;
+      
+      // prepare the indexes to start iterate through animations
+      animationResumeIndex = stepResumeIndex = 0;
     }
-    
+
+    // this is to not use .current everywhere animationsCacheRef object will be accesed
     const animationsCache = animationsCacheRef.current;
 
+    // run the animations
     for (let animationId = animationResumeIndex; animationId < animationsCache.length; animationId++) {
       for (let animationStepId = stepResumeIndex; animationStepId < animationsCache[animationId].length; animationStepId++) {
+
+        // animation is paused, record the animation and step indexes to know where to resume if requested.
         if (!isAnimationRunningRef.current) {
           dispatch({
             type: 'changed_animation_pause',
@@ -46,11 +54,10 @@ function App() {
           return;
         }
 
-        const animationValue = animationsCache[animationId][animationStepId];
-
         // if animation object is on index 1
         // that means the array data change/swap has been requested at this animation step
         // so we update the state of the data to trigger a re-render and display the change. 
+        const animationValue = animationsCache[animationId][animationStepId];
         if (animationStepId === 1) {
           dispatch({
             type: 'changed_data',
