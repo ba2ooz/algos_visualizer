@@ -19,22 +19,39 @@ function App() {
   // ref var sortSpeedRef is needed to update the real time value in the animations loop
   const [sortState, dispatch] = useReducer(sortReducer, initialState);
   const sortSpeedRef = useRef(sortState.sortSpeed);
+  const animationsCacheRef = useRef([]);
   const isAnimationRunningRef = useRef(false);
   const barsCount = sortState.data.length;
 
-  const animateSort = async () => {
-    const dataCopy = sortState.data.slice();
-    const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
+  const animateSort = async (animationResumeIndex, stepResumeIndex) => {
+    // negative resume indexes mean new sort is requested (either data and size or algorithm has been changed)
+    if (animationResumeIndex === -1 && stepResumeIndex === -1) {
+      animationResumeIndex = stepResumeIndex = 0;
+      const dataCopy = sortState.data.slice();
+      const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
+      animationsCacheRef.current = animations;
+    }
+    
+    const animationsCache = animationsCacheRef.current;
 
-    for (const [_, animation] of Object.entries(animations)) {
-      for (const [animationId, animationValue] of Object.entries(animation)) {
-        if (!isAnimationRunningRef.current)
+    for (let animationId = animationResumeIndex; animationId < animationsCache.length; animationId++) {
+      for (let animationStepId = stepResumeIndex; animationStepId < animationsCache[animationId].length; animationStepId++) {
+        if (!isAnimationRunningRef.current) {
+          dispatch({
+            type: 'changed_animation_pause',
+            animationIndex: animationId,
+            stepIndex: animationStepId
+          });
+
           return;
+        }
 
-        // if animation object contains the data_change property 
-        // that means the array data has changed at that particular animation step
+        const animationValue = animationsCache[animationId][animationStepId];
+
+        // if animation object is on index 1
+        // that means the array data change/swap has been requested at this animation step
         // so we update the state of the data to trigger a re-render and display the change. 
-        if (animationId === 'data_change') {
+        if (animationStepId === 1) {
           dispatch({
             type: 'changed_data',
             data: animationValue,
@@ -50,6 +67,13 @@ function App() {
 
       await delay(sortSpeedRef.current); // ms
     }
+
+    // after all animations have been played, reset resume indexes to their default values
+    dispatch({
+      type: 'changed_animation_pause',
+      animationIndex: -1,
+      stepIndex: -1
+    });
   }
 
   const dataSizeControlProps = {
@@ -68,6 +92,8 @@ function App() {
 
   const animationControlProps = {
     startAnimation: animateSort,
+    animationResumeIndex: sortState.pauseResume.animationIndex,
+    stepResumeIndex: sortState.pauseResume.stepIndex,
     isAnimationRunningRef: isAnimationRunningRef
   }
 
@@ -76,7 +102,7 @@ function App() {
       <div className={styles.appContainer}>
         <ArrayBars
           payload={sortState.data}
-          backbgroundColors={sortState.animations}
+          backbgroundColors={sortState.arrayAnimationState}
         />
         <Controls
           selectControlOptions={availableAlgorithms.map((algorithm) => { return algorithm.name })}

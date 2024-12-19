@@ -39,13 +39,9 @@ export function Controls({
     }
 
     const handleStart = async () => {
-        dispatch({
-            type: 'changed_animation_reset'
-        });
-
         setIsControlDisabled(true);
         animationControl.isAnimationRunningRef.current = true;
-        await animationControl.startAnimation();
+        await animationControl.startAnimation(animationControl.animationResumeIndex, animationControl.stepResumeIndex);
 
         setIsControlDisabled(false);
     }

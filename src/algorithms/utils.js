@@ -10,15 +10,11 @@ export class Animator {
     }
 
     add(animationStep) {
-        this.animations.push({ animationStep });
+        this.animations.push([ animationStep ]);
     }
 
-    addDataChange(dataObject, extraAnimationStep = null) {
-        const change = (extraAnimationStep === null)
-            ? { data_change: dataObject }
-            : { data_change: dataObject, extraAnimationStep }
-
-        this.animations.push(change);
+    addDataChange(dataObject, extraAnimationStep = new Object()) {
+        this.animations.push([ extraAnimationStep, dataObject ]);
     }
 
     getAnimations() {

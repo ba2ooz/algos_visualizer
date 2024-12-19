@@ -7,8 +7,9 @@ const INIT_DATA_SIZE=70;
 export const initialState = {
     speed: 15,
     algorithm: 0, // represents an index
+    pauseResume: { animationIndex: -1, stepIndex: -1},
     data: [...Array(INIT_DATA_SIZE)].map(() => randomize(MIN_DATA_VALUE, MAX_DATA_VALUE)),
-    animations: [...Array(INIT_DATA_SIZE)].map(() => COLORS.DEFAULT)
+    arrayAnimationState: [...Array(INIT_DATA_SIZE)].map(() => COLORS.DEFAULT)
 };
 
 export function sortReducer(state, action) {
@@ -16,6 +17,7 @@ export function sortReducer(state, action) {
         case 'changed_algorithm': {
             return {
                 ...state,
+                pauseResume: { animationIndex: -1, stepIndex: -1},
                 algorithm: action.selectedAlgorithm
             }
         }
@@ -32,25 +34,26 @@ export function sortReducer(state, action) {
         case 'changed_dataSize': {
             return {
                 ...state,
+                pauseResume: { animationIndex: -1, stepIndex: -1},
                 data: [...Array(action.dataSize)].map(() => randomize(MIN_DATA_VALUE, MAX_DATA_VALUE)),
-                animations: [...Array(action.dataSize)].map(() => COLORS.DEFAULT)
+                arrayAnimationState: [...Array(action.dataSize)].map(() => COLORS.DEFAULT)
             };
         }
         case 'changed_animation': {
-            const newAnimations = [...state.animations];
+            const newArrayAnimationState = [...state.arrayAnimationState];
             for (const [id, value] of Object.entries(action.colors))
-                newAnimations[id] = value;
+                newArrayAnimationState[id] = value;
 
             return {
                 ...state,
-                animations: newAnimations
+                arrayAnimationState: newArrayAnimationState
             };
         }
-        case 'changed_animation_reset': {
+        case 'changed_animation_pause': {
             return {
                 ...state,
-                animations: [...Array(state.animations.length)].map(() => COLORS.DEFAULT)
-            };
+                pauseResume: { animationIndex: action.animationIndex, stepIndex: action.stepIndex },
+            }
         }
         case 'changed_speed': {
             return {
