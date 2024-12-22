@@ -31,7 +31,7 @@ function App() {
       const dataCopy = sortState.data.slice();
       const animations = availableAlgorithms[sortState.algorithm].execute(dataCopy);
       animationsCacheRef.current = animations;
-      
+
       // prepare the indexes to start iterate through animations
       animationResumeIndex = stepResumeIndex = 0;
     }
@@ -44,15 +44,15 @@ function App() {
       for (let animationStepId = stepResumeIndex; animationStepId < animationsCache[animationId].length; animationStepId++) {
 
         // animation is paused, record the animation and step indexes to know where to resume if requested.
-        if (!isAnimationRunningRef.current) {
-          dispatch({
-            type: 'changed_animation_pause',
-            animationIndex: animationId,
-            stepIndex: animationStepId
-          });
-
+        if (!isAnimationRunningRef.current)
           return;
-        }
+
+        // take a snapshot of the current state 
+        dispatch({
+          type: 'snapshot_history',
+          animationIndex: animationId,
+          stepIndex: animationStepId
+        });
 
         // if animation object is on index 1
         // that means the array data change/swap has been requested at this animation step
@@ -70,6 +70,8 @@ function App() {
             colors: animationValue
           })
         }
+
+        stepResumeIndex = 0;
       }
 
       await delay(sortSpeedRef.current); // ms
@@ -77,7 +79,7 @@ function App() {
 
     // after all animations have been played, reset resume indexes to their default values
     dispatch({
-      type: 'changed_animation_pause',
+      type: 'exited_animation',
       animationIndex: -1,
       stepIndex: -1
     });
@@ -101,6 +103,7 @@ function App() {
     startAnimation: animateSort,
     animationResumeIndex: sortState.pauseResume.animationIndex,
     stepResumeIndex: sortState.pauseResume.stepIndex,
+    animations: animationsCacheRef.current,
     isAnimationRunningRef: isAnimationRunningRef
   }
 
