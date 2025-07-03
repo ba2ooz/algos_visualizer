@@ -10,7 +10,6 @@ export function ArrayBars({ payload, backbgroundColors }) {
     const containerWidth = 2000;
     const totalGap = gap * (barsCount - 1);
     const dynamicWidth = Math.round((containerWidth - totalGap) / barsCount);
-    const dynamicMargin = gap / 2;
 
     return (
         <>
@@ -23,8 +22,8 @@ export function ArrayBars({ payload, backbgroundColors }) {
                             style={{
                                 height: value,
                                 width: dynamicWidth,
-                                marginLeft: (id === 0) ? 0 : dynamicMargin,
-                                marginRight: (id === barsCount - 1) ? 0 : dynamicMargin,
+                                marginLeft: (id === 0) ? 0 : 0.3,
+                                marginRight: (id === barsCount - 1) ? 0 : 0.5,
                                 backgroundColor: backbgroundColors[id]
                             }} />
                     )
