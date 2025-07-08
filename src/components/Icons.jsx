@@ -1,5 +1,5 @@
 // Color utility function
-const getIconColor = (isActive) => isActive ? 'white' : 'rgba(159, 159, 159, 0.89)';
+const getIconColor = (isActive) => isActive ? 'white' : 'rgba(119, 119, 119, 0.89)';
 
 // Back Arrow Icon
 export const BackIcon = ({ isActive = true, ...props }) => (

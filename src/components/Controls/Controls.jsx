@@ -158,6 +158,7 @@ export function Controls({
                     {arrayOrderOptions.map((button) => (
                         <button
                           key={button.id}
+                          disabled={isControlDisabled}
                           className={`${styles.button} ${selectedArrayOrder === button.id ? styles.selected : ''}`}
                           onClick={() => handleSelectArrayOrder(button.id)}
                         >

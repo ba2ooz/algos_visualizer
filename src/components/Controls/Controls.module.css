@@ -58,6 +58,24 @@
   transform: translateY(1px);
 }
 
+.button:disabled {
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+.button:disabled:hover {
+    background: #3D4C53;
+}
+
+.button:disabled:active {
+    box-shadow: none;
+    transform: none;
+}
+
+.button.selected:disabled:hover {
+    background: #26A69A;
+}
+
 @media screen and (max-width: 568px) {
     .row {
         flex-direction: column;
