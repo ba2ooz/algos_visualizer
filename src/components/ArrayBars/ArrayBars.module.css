@@ -2,8 +2,8 @@
     transform-origin: bottom;
     width: auto;
     margin: 0 13vw;
-    height: 65vh;
-    min-height: 425px;
+    height: 60vh;
+    min-height: 415px;
     display: flex;
     flex-direction: row;
     justify-content: center;

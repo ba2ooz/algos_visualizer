@@ -11,7 +11,18 @@ export function Controls({
     dispatch }) {
 
     const [isControlDisabled, setIsControlDisabled] = useState(false);
+    const [selectedArrayOrder, setSelectedArrayOrder] = useState(null);
     const svgSize = 28;
+
+    const arrayOrderOptions = [
+      { id: 'desc', label: <svg width="50" height="45"><use href="#icon-descending-bars" /></svg>},
+      { id: 'rand', label: <svg width="50" height="45"><use href="#icon-random-bars" /></svg> },
+      { id: 'asc', label: <svg width="50" height="45"><use href="#icon-ascending-bars" /></svg> }
+    ];
+
+    const handleSelectArrayOrder = (id) => {
+      setSelectedArrayOrder(id);
+    };
 
     const handleDataSizeChange = (value) => {
         // generates new array everytime dataSize is changed
@@ -110,34 +121,50 @@ export function Controls({
 
     return (
         <>
+            {/* <object type="image/svg+xml" data="icons.svg" style={{ display: 'none' }} aria-label="SVG Icons"></object> */}
             <div className={styles.controls}>
                 <div className={`${styles.row} ${styles.row1}`}>
-                    {
-                        animationControl.animationResumeIndex !== -1 && !isControlDisabled &&
+                    <div className={styles.buttonGroup}>
+                        {
+                            animationControl.animationResumeIndex !== -1 && !isControlDisabled &&
+                            <button
+                                className={styles.button}
+                                onClick={handlePrevious}>
+                                prev
+                            </button>
+                        }
                         <button
-                            className={styles.playStopButton}
-                            onClick={handlePrevious}>
-                            prev
+                            className={styles.button}
+                            onClick={!isControlDisabled ? handleStart : handleStop}>
+                            {!isControlDisabled ? (<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} fill="white" viewBox="0 0 16 16"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393" /></svg>) : (<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} fill="white" viewBox="0 0 16 16"><path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5" /></svg>)}
                         </button>
-                    }
-                    <button
-                        className={styles.playStopButton}
-                        onClick={!isControlDisabled ? handleStart : handleStop}>
-                        {!isControlDisabled ? (<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} fill="white" viewBox="0 0 16 16"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393" /></svg>) : (<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} fill="white" viewBox="0 0 16 16"><path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5" /></svg>)}
-                    </button>
-                    {
-                        animationControl.animationResumeIndex !== -1 && !isControlDisabled &&
-                        <button
-                            className={styles.playStopButton}
-                            onClick={handleNext}>
-                            next
-                        </button>
-                    }
+                        {
+                            animationControl.animationResumeIndex !== -1 && !isControlDisabled &&
+                            <button
+                                className={styles.button}
+                                onClick={handleNext}>
+                                next
+                            </button>
+                        }
+                    </div>
+
                     <CustomSelect
                         disabled={isControlDisabled}
                         options={selectControlOptions}
                         onChange={handleAlgoSelectChange}
                     />
+                </div>
+
+                <div className={`${styles.buttonGroup} ${styles.margin}`}>
+                    {arrayOrderOptions.map((button) => (
+                        <button
+                          key={button.id}
+                          className={`${styles.button} ${selectedArrayOrder === button.id ? styles.selected : ''}`}
+                          onClick={() => handleSelectArrayOrder(button.id)}
+                        >
+                          {button.label}
+                        </button>
+                    ))}
                 </div>
 
                 <div className={styles.row}>
