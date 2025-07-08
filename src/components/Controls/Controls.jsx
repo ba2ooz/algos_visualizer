@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Slider } from '../../components/Slider/Slider';
 import styles from './Controls.module.css';
 import { CustomSelect } from '../CustomSelect/CustomSelect';
+import * as Icons from '../../components/Icons.jsx';
 
 export function Controls({
     selectControlOptions,
@@ -12,12 +13,11 @@ export function Controls({
 
     const [isControlDisabled, setIsControlDisabled] = useState(false);
     const [selectedArrayOrder, setSelectedArrayOrder] = useState(null);
-    const svgSize = 28;
 
     const arrayOrderOptions = [
-      { id: 'desc', label: <svg width="50" height="45"><use href="#icon-descending-bars" /></svg>},
-      { id: 'rand', label: <svg width="50" height="45"><use href="#icon-random-bars" /></svg> },
-      { id: 'asc', label: <svg width="50" height="45"><use href="#icon-ascending-bars" /></svg> }
+      { id: 'desc', label: <Icons.DescendingBarsIcon isActive={!isControlDisabled}/> },
+      { id: 'rand', label: <Icons.RandomBarsIcon isActive={!isControlDisabled} /> },
+      { id: 'asc', label: <Icons.AscendingBarsIcon isActive={!isControlDisabled} /> }
     ];
 
     const handleSelectArrayOrder = (id) => {
@@ -121,7 +121,6 @@ export function Controls({
 
     return (
         <>
-            {/* <object type="image/svg+xml" data="icons.svg" style={{ display: 'none' }} aria-label="SVG Icons"></object> */}
             <div className={styles.controls}>
                 <div className={`${styles.row} ${styles.row1}`}>
                     <div className={styles.buttonGroup}>
@@ -130,20 +129,20 @@ export function Controls({
                             <button
                                 className={styles.button}
                                 onClick={handlePrevious}>
-                                prev
+                                <Icons.BackIcon isActive={!isControlDisabled} />
                             </button>
                         }
                         <button
                             className={styles.button}
                             onClick={!isControlDisabled ? handleStart : handleStop}>
-                            {!isControlDisabled ? (<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} fill="white" viewBox="0 0 16 16"><path d="m11.596 8.697-6.363 3.692c-.54.313-1.233-.066-1.233-.697V4.308c0-.63.692-1.01 1.233-.696l6.363 3.692a.802.802 0 0 1 0 1.393" /></svg>) : (<svg xmlns="http://www.w3.org/2000/svg" width={svgSize} height={svgSize} fill="white" viewBox="0 0 16 16"><path d="M5 3.5h6A1.5 1.5 0 0 1 12.5 5v6a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 11V5A1.5 1.5 0 0 1 5 3.5" /></svg>)}
+                            {!isControlDisabled ? (<Icons.PlayIcon/>) : (<Icons.PauseIcon/>)}
                         </button>
                         {
                             animationControl.animationResumeIndex !== -1 && !isControlDisabled &&
                             <button
                                 className={styles.button}
                                 onClick={handleNext}>
-                                next
+                                <Icons.ForwardIcon isActive={!isControlDisabled} />
                             </button>
                         }
                     </div>
