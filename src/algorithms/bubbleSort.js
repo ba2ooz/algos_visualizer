@@ -41,5 +41,9 @@ export function bubbleSort(arr) {
         animator.setSorted(nextSortedBubblePos);
     }
 
+    // set the last element as sorted
+    // it is already sorted by the previous iterations 
+    animator.setSorted(0);
+
     return animator.getAnimations();
 }
