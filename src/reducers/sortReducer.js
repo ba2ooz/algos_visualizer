@@ -20,6 +20,7 @@ export function sortReducer(state, action) {
                 ...state,
                 pauseResume: { animationIndex: -1, stepIndex: -1 },
                 algorithm: action.selectedAlgorithm,
+                arrayAnimationState: [...Array(state.data.length)].map(() => COLORS.DEFAULT),
                 history: []
             }
         }

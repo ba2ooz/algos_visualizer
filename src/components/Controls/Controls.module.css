@@ -58,6 +58,11 @@
   transform: translateY(1px);
 }
 
+.button.selected:active {
+  transform: none;
+}
+
+
 .button:disabled {
     opacity: 0.6;
     box-shadow: none;
@@ -74,6 +79,10 @@
 
 .button.selected:disabled:hover {
     background: #26A69A;
+}
+
+.button.selected:disabled:active {
+    transform: translateY(1px);
 }
 
 @media screen and (max-width: 568px) {

@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import styles from "./CustomSelect.module.css";
 
 export function CustomSelect({ disabled, options, onChange }) {
@@ -20,10 +20,15 @@ export function CustomSelect({ disabled, options, onChange }) {
             ref={detailsRef}
             className={disabled ? styles.disabled : ""}
             open={isOpen}
-            onMouseEnter={() => setIsOpen(true)}
+            // onMouseEnter={() => setIsOpen(true)}  // open on hover
             onMouseLeave={() => setIsOpen(false)}
             >
-            <summary>
+            <summary 
+                onClick={e => {
+                    e.preventDefault(); // prevent default to avoid closing the dropdown on click
+                    setIsOpen(prev => !prev);
+                }}
+            >
                 {options[selectedValue]}
             </summary>
             <ul>
