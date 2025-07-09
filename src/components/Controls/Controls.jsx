@@ -1,8 +1,10 @@
-import { useState } from 'react';
-import { Slider } from '../../components/Slider/Slider';
-import styles from './Controls.module.css';
+import { useState, useEffect } from 'react';
+import { STATE_ARR_ORDER } from '../../shared/utils';
 import { CustomSelect } from '../CustomSelect/CustomSelect';
-import * as Icons from '../../components/Icons.jsx';
+import { Slider } from '../../components/Slider/Slider';
+import * as Icons from '../../components/Icons';
+
+import styles from './Controls.module.css';
 
 export function Controls({
     selectControlOptions,
@@ -14,22 +16,36 @@ export function Controls({
     const [isControlDisabled, setIsControlDisabled] = useState(false);
     const [selectedArrayOrder, setSelectedArrayOrder] = useState(null);
 
+    // make sure the random order button is selected by default and after the animation has completed
+    useEffect(() => {
+        if (animationControl.animationResumeIndex === -1) {
+            setSelectedArrayOrder(STATE_ARR_ORDER.RAND);
+        }
+    }, [animationControl.animationResumeIndex]);
+
     const arrayOrderOptions = [
-      { id: 'desc', label: <Icons.DescendingBarsIcon isActive={!isControlDisabled}/> },
-      { id: 'rand', label: <Icons.RandomBarsIcon isActive={!isControlDisabled} /> },
-      { id: 'asc', label: <Icons.AscendingBarsIcon isActive={!isControlDisabled} /> }
+      { id: STATE_ARR_ORDER.DESC, label: <Icons.DescendingBarsIcon isActive={!isControlDisabled}/> },
+      { id: STATE_ARR_ORDER.RAND, label: <Icons.RandomBarsIcon isActive={!isControlDisabled} /> },
+      { id: STATE_ARR_ORDER.ASC, label: <Icons.AscendingBarsIcon isActive={!isControlDisabled} /> }
     ];
 
     const handleSelectArrayOrder = (id) => {
-      setSelectedArrayOrder(id);
+        setSelectedArrayOrder(id);
+
+        dispatch({
+            type: 'changed_stateArray',
+            dataSize: -1,
+            order: id
+        });
     };
 
     const handleDataSizeChange = (value) => {
         // generates new array everytime dataSize is changed
         const nextDataSize = parseFloat(value);
         dispatch({
-            type: 'changed_dataSize',
-            dataSize: nextDataSize
+            type: 'changed_stateArray',
+            dataSize: nextDataSize,
+            order: selectedArrayOrder || STATE_ARR_ORDER.RAND // default to random if no order is selected
         });
     }
 

@@ -1,13 +1,13 @@
-import { COLORS, randomize } from "../shared/utils";
+import { COLORS, STATE_ARR_ORDER, randomize } from "../shared/utils";
 
-const MIN_DATA_VALUE=10;
-const MAX_DATA_VALUE=350;
-const INIT_DATA_SIZE=70;
+const MIN_DATA_VALUE = 10;
+const MAX_DATA_VALUE = 350;
+const INIT_DATA_SIZE = 70;
 
 export const initialState = {
     speed: 15,
     algorithm: 0, // represents an index
-    pauseResume: { animationIndex: -1, stepIndex: -1},
+    pauseResume: { animationIndex: -1, stepIndex: -1 },
     data: [...Array(INIT_DATA_SIZE)].map(() => randomize(MIN_DATA_VALUE, MAX_DATA_VALUE)),
     arrayAnimationState: [...Array(INIT_DATA_SIZE)].map(() => COLORS.DEFAULT),
     history: []
@@ -18,7 +18,7 @@ export function sortReducer(state, action) {
         case 'changed_algorithm': {
             return {
                 ...state,
-                pauseResume: { animationIndex: -1, stepIndex: -1},
+                pauseResume: { animationIndex: -1, stepIndex: -1 },
                 algorithm: action.selectedAlgorithm,
                 history: []
             }
@@ -33,12 +33,26 @@ export function sortReducer(state, action) {
                 data: newData
             };
         }
-        case 'changed_dataSize': {
+        case 'changed_stateArray': {
+            const newDataSize =
+                (action.dataSize === -1) ? state.data.length : action.dataSize;
+
+            let arrData = [...Array(newDataSize)]
+                .map(() => randomize(MIN_DATA_VALUE, MAX_DATA_VALUE));
+
+            if (action.order === STATE_ARR_ORDER.ASC) {
+                arrData.sort((a, b) => a - b);
+            } 
+            else 
+            if (action.order === STATE_ARR_ORDER.DESC) {
+                arrData.sort((a, b) => b - a);
+            }
+
             return {
                 ...state,
-                pauseResume: { animationIndex: -1, stepIndex: -1},
-                data: [...Array(action.dataSize)].map(() => randomize(MIN_DATA_VALUE, MAX_DATA_VALUE)),
-                arrayAnimationState: [...Array(action.dataSize)].map(() => COLORS.DEFAULT),
+                pauseResume: { animationIndex: -1, stepIndex: -1 },
+                data: arrData,
+                arrayAnimationState: [...Array(newDataSize)].map(() => COLORS.DEFAULT),
                 history: []
             };
         }
@@ -53,7 +67,7 @@ export function sortReducer(state, action) {
             };
         }
         case 'exited_animation': {
-            let newHistory = [...state.history]; 
+            let newHistory = [...state.history];
             if (action.animationIndex === -1)
                 newHistory = [];
 

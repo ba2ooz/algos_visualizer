@@ -6,6 +6,12 @@ export const COLORS = {
     DEFAULT: 'gold' 
 };
 
+export const STATE_ARR_ORDER = {
+    DESC: 'desc',
+    RAND: 'rand',   
+    ASC: 'asc'
+};
+
 export function randomize(min, max) {
     return Math.floor(Math.random() * (max - min) + min);
 }
