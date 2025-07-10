@@ -68,10 +68,6 @@ export function sortReducer(state, action) {
             };
         }
         case 'exited_animation': {
-            let newHistory = [...state.history];
-            if (action.animationIndex === -1)
-                newHistory = [];
-
             return {
                 ...state,
                 pauseResume: { animationIndex: action.animationIndex, stepIndex: action.stepIndex },

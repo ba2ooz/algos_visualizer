@@ -13,7 +13,7 @@ export class Animator {
         this.animations.push([ animationStep ]);
     }
 
-    addDataChange(dataObject, extraAnimationStep = new Object()) {
+    addDataChange(dataObject, extraAnimationStep = {}) {
         this.animations.push([ extraAnimationStep, dataObject ]);
     }
 
